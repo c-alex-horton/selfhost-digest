@@ -6,7 +6,7 @@ instances:
         posts: 5
       - name: technology
         posts: 3
-  - url: https://lemmy.ml/
+  - url: https://lemmy.ml
     communities:
       - name: linux
         posts: 2
