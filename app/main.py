@@ -12,6 +12,24 @@ from .config import config
 all_posts = []
 
 
+def setup():
+    output_dir = Path("output")
+
+    if output_dir.exists():
+        for item in output_dir.iterdir():
+            if item.is_dir():
+                shutil.rmtree(item)
+            else:
+                item.unlink()
+    else:
+        output_dir.mkdir()
+
+    image_dir = output_dir / "images"
+    image_dir.mkdir(exist_ok=True)
+
+    shutil.copy("placeholder.jpg", image_dir / "placeholder.jpg")
+
+
 # Fetch posts from all instances and communities defined in the Yaml config
 def get_posts(instances):
     print("Fetching Posts...")
@@ -59,15 +77,23 @@ def posts_to_markdown():
             for post in instance_posts["posts"]:
                 # Make the post name a link to the Lemmy article
                 f.write(f"### [{post['post']['name']}]({post['post']['ap_id']})\n")
+
                 # Get the Opengraph image of the article link. Might change this to the thumbnail image
-                if "url" in post["post"]:
-                    image = handle_opengraph(post["post"]["url"])
+                if "thumbnail_url" in post["post"]:
+                    image = download_image(post["post"]["thumbnail_url"])
                     if image:
                         f.write(f"![link image]({image})\n")
                 elif "image_details" in post:
                     image = download_image(post["image_details"]["link"])
                     if image:
                         f.write(f"![link image]({image})\n")
+                elif "url" in post["post"]:
+                    image = handle_opengraph(post["post"]["url"])
+                    if image:
+                        f.write(f"![link image]({image})\n")
+                elif config["image_for_all_posts"]:
+                    f.write(f"![link image](images/placeholder.jpg)\n")
+
                 if "body" in post["post"]:
                     f.write(post["post"]["body"] + "\n")
                 if "url" in post["post"]:
@@ -89,6 +115,8 @@ def move_output(path):
         print(e)
 
 
+setup()
+
 if not config["testing"]:
     get_posts(config["instances"])
 else:
@@ -101,4 +129,6 @@ else:
         get_posts(config["instances"])
 
 posts_to_markdown()
-move_output(config["output_path"])
+
+if not config["testing"]:
+    move_output(config["output_path"])
