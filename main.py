@@ -6,6 +6,7 @@ import json
 from opengraph_parse import parse_page
 from urllib.parse import urlparse
 import os
+import shutil
 
 with open("config.yml", "r") as f:
     config = yaml.safe_load(f)
@@ -47,6 +48,9 @@ def get_posts(instances):
 
 def posts_to_markdown():
     print("Writing posts to markdown...")
+    output_dir = Path("./output")
+    output_dir.mkdir(exist_ok=True)
+
     with open("./output/output.md", "w", encoding="utf-8") as f:
         f.write("# Selfhost Digest\n")
         for instance_posts in all_posts:
@@ -55,6 +59,10 @@ def posts_to_markdown():
                 f.write(f"### {post['post']['name']}\n")
                 if "url" in post["post"]:
                     image = handle_opengraph(post["post"]["url"])
+                    if image:
+                        f.write(f"![link image]({image})")
+                elif "image_details" in post:
+                    image = download_image(post["image_details"]["link"])
                     if image:
                         f.write(f"![link image]({image})")
                 if "body" in post["post"]:
@@ -89,6 +97,11 @@ def download_image(url):
         # Build full path
         filepath = images_dir / filename
 
+        # Skip download if file already exists
+        if filepath.exists():
+            print(f"Image already exists: {filepath}")
+            return filepath.relative_to("output")
+
         # Download the image
         response = requests.get(url, stream=True, timeout=10)
         response.raise_for_status()
@@ -98,11 +111,23 @@ def download_image(url):
                 f.write(chunk)
 
         print(f"Downloaded: {filepath}")
-        return filepath
+        return filepath.relative_to("output")
 
     except Exception as e:
         print(f"Failed to download {url}: {e}")
         return None
+
+
+def move_output(path):
+    try:
+        shutil.rmtree(path + "output")
+    except Exception as e:
+        print(e)
+
+    try:
+        shutil.move("./output", path)
+    except Exception as e:
+        print(e)
 
 
 if not config["testing"]:
@@ -117,3 +142,4 @@ else:
         get_posts(config["instances"])
 
 posts_to_markdown()
+move_output(config["output_path"])
