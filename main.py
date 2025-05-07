@@ -57,7 +57,9 @@ def posts_to_markdown():
         for instance_posts in all_posts:
             f.write(f"## {instance_posts['community']}\n")
             for post in instance_posts["posts"]:
-                f.write(f"### {post['post']['name']}\n")
+                # Make the post name a link to the Lemmy article
+                f.write(f"### [{post['post']['name']}]({post['post']['ap_id']})\n")
+                # Get the Opengraph image of the article link. Might change this to the thumbnail image
                 if "url" in post["post"]:
                     image = handle_opengraph(post["post"]["url"])
                     if image:
