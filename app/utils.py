@@ -4,9 +4,13 @@ from urllib.parse import urlparse
 import uuid
 import os
 from opengraph_parse import parse_page
+from app.config import config
 
 
 def handle_opengraph(link_url):
+    if config["testing"]:
+        return "images/placeholder.jpg"
+
     data = parse_page(link_url)
     if isinstance(data, dict) and "og:image" in data:
         return download_image(data["og:image"])
@@ -15,6 +19,8 @@ def handle_opengraph(link_url):
 
 
 def download_image(url):
+    if config["testing"]:
+        return "images/placeholder.jpg"
     try:
         # Create "images" directory if it doesn't exist
         images_dir = Path("./output/images")
@@ -47,4 +53,8 @@ def download_image(url):
 
     except Exception as e:
         print(f"Failed to download {url}: {e}")
+
+        if config["image_for_all_posts"]:
+            return "images/placeholder.jpg"
+
         return None
