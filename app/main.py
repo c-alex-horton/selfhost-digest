@@ -63,6 +63,9 @@ def posts_to_markdown():
 
     with open("./output/output.md", "w", encoding="utf-8") as f:
         f.write("# Selfhost Digest\n")
+        now = datetime.now()
+        display_time = now.strftime("%Y-%m-%d %H:%M:%S")
+        f.write(f"#### {display_time}\n")
         for instance_posts in all_posts:
             f.write(f"## {instance_posts['community']}\n")
             for post in instance_posts["posts"]:
@@ -72,11 +75,11 @@ def posts_to_markdown():
                 if "url" in post["post"]:
                     image = handle_opengraph(post["post"]["url"])
                     if image:
-                        f.write(f"![link image]({image})")
+                        f.write(f"![link image]({image})\n")
                 elif "image_details" in post:
                     image = download_image(post["image_details"]["link"])
                     if image:
-                        f.write(f"![link image]({image})")
+                        f.write(f"![link image]({image})\n")
                 if "body" in post["post"]:
                     f.write(post["post"]["body"] + "\n")
                 if "url" in post["post"]:
