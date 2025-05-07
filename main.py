@@ -7,6 +7,7 @@ from opengraph_parse import parse_page
 from urllib.parse import urlparse
 import os
 import shutil
+import uuid
 
 with open("config.yml", "r") as f:
     config = yaml.safe_load(f)
@@ -92,7 +93,7 @@ def download_image(url):
         parsed = urlparse(url)
         filename = os.path.basename(parsed.path)
         if not filename:
-            filename = "image.jpg"  # fallback if no name
+            filename = str(uuid.uuid4()) + "-image.jpg"  # fallback if no name
 
         # Build full path
         filepath = images_dir / filename
