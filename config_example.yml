@@ -1,7 +1,7 @@
 ---
-testing: false
+testing: true
 image_for_all_posts: true
-output_path: ./export
+output_path: ./export/
 instances:
   - url: https://lemmy.world
     communities:
