@@ -5,11 +5,10 @@ from app.utils import download_image, handle_opengraph
 from app.config import config
 from pathlib import Path
 
-all_posts = []
-
 
 # Fetch posts from all instances and communities defined in the Yaml config
 def get_posts(instances):
+    all_posts = []
     print("Fetching Posts...")
     for instance in instances:
         url = f"{instance["url"]}/api/v3/post/list"
@@ -38,9 +37,10 @@ def get_posts(instances):
         json.dump(all_posts, f, ensure_ascii=False, indent=2, default=str)
 
     print("All posts received")
+    return all_posts
 
 
-def posts_to_markdown():
+def posts_to_markdown(posts):
     print("Generating markdown from posts...")
     lines = []
 
@@ -49,7 +49,7 @@ def posts_to_markdown():
     display_time = now.strftime("%Y-%m-%d %H:%M:%S")
     lines.append(f"#### {display_time}\n")
 
-    for instance_posts in all_posts:
+    for instance_posts in posts:
         lines.append(f"## {instance_posts['community']}\n")
         for post in instance_posts["posts"]:
             lines.append(f"### [{post['post']['name']}]({post['post']['ap_id']})\n")
@@ -80,14 +80,14 @@ def posts_to_markdown():
 def gen_lemmy_news():
 
     if not config["testing"]:
-        get_posts(config["instances"])
+        posts = get_posts(config["instances"])
     else:
         print("Testing Enabled")
         if Path("posts_output.json").exists():
             with open("posts_output.json", "r", encoding="utf-8") as f:
-                all_posts = json.load(f)
+                posts = json.load(f)
         else:
             print("No 'posts_output.json' file found. Pulling posts.")
-            get_posts(config["instances"])
+            posts = get_posts(config["instances"])
 
-    return posts_to_markdown()
+    return posts_to_markdown(posts)

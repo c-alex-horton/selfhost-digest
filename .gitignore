@@ -3,6 +3,8 @@ output.md
 posts_output.json
 config.yml
 images/
+old_export/
+export/
 
 
 # Byte-compiled / optimized / DLL files
