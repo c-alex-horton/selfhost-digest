@@ -2,6 +2,7 @@ from pathlib import Path
 import shutil
 from .config import config
 from app.lemmy.lemmy_news import gen_lemmy_news
+from datetime import datetime
 
 all_posts = []
 output_dir = Path(config["output_path"])
@@ -24,11 +25,22 @@ def setup():
     shutil.copy("placeholder.jpg", image_dir / "placeholder.jpg")
 
 
+def make_header():
+    lines = []
+
+    lines.append("# Selfhost Digest\n")
+    now = datetime.now()
+    display_time = now.strftime("%Y-%m-%d %H:%M:%S")
+    lines.append(f"#### {display_time}\n")
+    return "\n".join(lines)
+
+
 def main():
     setup()
 
     all_sections = []
 
+    all_sections.append(make_header())
     all_sections.append(gen_lemmy_news())
 
     full_md = "\n\n---\n\n".join(all_sections)
