@@ -21,18 +21,14 @@ def handle_opengraph(link_url):
 def download_image(url):
     if config["testing"]:
         return "images/placeholder.jpg"
+
     try:
-        # Create "images" directory if it doesn't exist
-        images_dir = Path("./output/images")
+        images_dir = Path(config["output_path"]) / "images"
         images_dir.mkdir(exist_ok=True)
 
-        # Extract filename from URL
-        filename = str(uuid.uuid4()) + "-image.jpg"  # fallback if no name
-
-        # Build full path
+        filename = str(uuid.uuid4()) + "-image.jpg"
         filepath = images_dir / filename
 
-        # Download the image
         response = requests.get(url, stream=True, timeout=10)
         response.raise_for_status()
 
@@ -41,12 +37,10 @@ def download_image(url):
                 f.write(chunk)
 
         print(f"Downloaded: {filepath}")
-        return filepath.relative_to("output")
+        return Path("images") / filename
 
     except Exception as e:
         print(f"Failed to download {url}: {e}")
-
         if config["image_for_all_posts"]:
             return "images/placeholder.jpg"
-
         return None
