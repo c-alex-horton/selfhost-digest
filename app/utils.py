@@ -27,18 +27,10 @@ def download_image(url):
         images_dir.mkdir(exist_ok=True)
 
         # Extract filename from URL
-        parsed = urlparse(url)
-        filename = os.path.basename(parsed.path)
-        if not filename:
-            filename = str(uuid.uuid4()) + "-image.jpg"  # fallback if no name
+        filename = str(uuid.uuid4()) + "-image.jpg"  # fallback if no name
 
         # Build full path
         filepath = images_dir / filename
-
-        # Skip download if file already exists
-        if filepath.exists():
-            print(f"Image already exists: {filepath}")
-            return filepath.relative_to("output")
 
         # Download the image
         response = requests.get(url, stream=True, timeout=10)
