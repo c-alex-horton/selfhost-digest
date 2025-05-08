@@ -1,5 +1,5 @@
 ---
-testing: true
+testing: false
 image_for_all_posts: true
 output_path: ./export/
 instances:
