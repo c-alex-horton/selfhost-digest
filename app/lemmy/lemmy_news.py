@@ -44,11 +44,6 @@ def posts_to_markdown(posts):
     print("Generating markdown from posts...")
     lines = []
 
-    lines.append("# Selfhost Digest\n")
-    now = datetime.now()
-    display_time = now.strftime("%Y-%m-%d %H:%M:%S")
-    lines.append(f"#### {display_time}\n")
-
     for instance_posts in posts:
         lines.append(f"## {instance_posts['community']}\n")
         for post in instance_posts["posts"]:
