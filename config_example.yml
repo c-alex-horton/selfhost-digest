@@ -2,14 +2,25 @@
 testing: false
 image_for_all_posts: true
 output_path: ./export/
-instances:
-  - url: https://lemmy.world
-    communities:
-      - name: news
+
+modules:
+  weather:
+    locations: Denver, Colorado
+  lemmy:
+    instances:
+      - url: https://lemmy.world
+        communities:
+          - name: news
+            posts: 5
+          - name: technology
+            posts: 3
+      - url: https://lemmy.ml
+        communities:
+          - name: linux
+            posts: 2
+  rss:
+    feeds:
+      - url: example.com/feed1
         posts: 5
-      - name: technology
-        posts: 3
-  - url: https://lemmy.ml
-    communities:
-      - name: linux
+      - url: example.com/feed2
         posts: 2

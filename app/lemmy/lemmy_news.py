@@ -1,7 +1,7 @@
 import requests
 from datetime import datetime
 import json
-from app.utils import download_image, handle_opengraph
+from app.utils.image_utils import download_image, handle_opengraph
 from app.config import config
 from pathlib import Path
 
@@ -72,10 +72,11 @@ def posts_to_markdown(posts):
     return "\n".join(lines)
 
 
-def gen_lemmy_news():
+def gen_lemmy_news(passed_config):
+    instances = passed_config["instances"]
 
     if not config["testing"]:
-        posts = get_posts(config["instances"])
+        posts = get_posts(instances)
     else:
         print("Testing Enabled")
         if Path("posts_output.json").exists():
@@ -83,6 +84,6 @@ def gen_lemmy_news():
                 posts = json.load(f)
         else:
             print("No 'posts_output.json' file found. Pulling posts.")
-            posts = get_posts(config["instances"])
+            posts = get_posts(instances)
 
     return posts_to_markdown(posts)

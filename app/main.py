@@ -3,6 +3,7 @@ import shutil
 from .config import config
 from app.lemmy.lemmy_news import gen_lemmy_news
 from datetime import datetime
+from app.weather.weather import gen_weather
 
 all_posts = []
 output_dir = Path(config["output_path"])
@@ -41,7 +42,11 @@ def main():
     all_sections = []
 
     all_sections.append(make_header())
+
     all_sections.append(gen_lemmy_news())
+
+    if "lemmy" in config["modules"]:
+        all_sections.append(gen_lemmy_news(config["modules"]["lemmy"]))
 
     full_md = "\n\n---\n\n".join(all_sections)
 
