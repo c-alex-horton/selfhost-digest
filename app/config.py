@@ -1,6 +1,8 @@
 import yaml
 import sys
 from pathlib import Path
+import platform
+from app.__version__ import __version__
 
 config_path = Path("config.yml")
 
@@ -15,3 +17,9 @@ except FileNotFoundError:
 except yaml.YAMLError as e:
     print(f"Error parsing config file: {e}")
     sys.exit(1)
+
+
+if config["user_agent_name"] == "default":
+    ua = f"Selfhost-Digest/{__version__} ({platform.node()}) https://github.com/c-alex-horton/selfhost-digest"
+else:
+    ua = config["user_agent_name"]
