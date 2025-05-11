@@ -17,28 +17,36 @@ By default, you're output will be in `selfhosted-digest/export/`
 ## Config.yml
 ```
 ---
-# If true, run's in testing mode. Will only download articles once if it doesn't have a posts_output.json already. 
-testing: false 
+# If true, runs in testing mode. Will only download articles once if a posts_output.json does not exist.
+testing: false
 
-# Make sure every post has an image, using placeholder where needed. Can imporve readability
+# Ensures every post has an image, using a placeholder where needed. Can improve readability.
 image_for_all_posts: true
 
-# Where to save the output
+# Where to save the generated output
 output_path: ./export/
 
+# If left as "default", the User-Agent will appear as:
+# 'Selfhost-Digest/1.0 <Your Network Host Name> https://github.com/c-alex-horton/selfhost-digest'
+user_agent_name: default
 
-# Lemmy Instances & Communities to pull from
-instances:
-  - url: https://lemmy.world
-    communities:
-      - name: news # Community Name
-        posts: 5 # Amount of posts to fetch
-      - name: technology
-        posts: 3
-  - url: https://lemmy.ml
-    communities:
-      - name: linux
-        posts: 2
+modules:
+  weather:
+    location: Denver, Colorado
+
+  lemmy:
+    instances:
+      - url: https://lemmy.world
+        communities:
+          - name: news
+            posts: 5
+          - name: technology
+            posts: 3
+      - url: https://lemmy.ml
+        communities:
+          - name: linux
+            posts: 2
+
 ```
 
 ## Placeholder.jpg
