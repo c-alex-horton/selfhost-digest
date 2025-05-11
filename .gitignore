@@ -5,7 +5,7 @@ config.yml
 images/
 old_export/
 export/
-
+.geocode.sqlite
 .cache.sqlite
 
 

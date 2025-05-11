@@ -4,6 +4,7 @@ import pandas as pd
 import requests_cache
 from retry_requests import retry
 from datetime import datetime
+from app.utils.geocoding import get_lat_and_lon
 
 weather_codes_map = {
     0: "Clear sky",
@@ -44,26 +45,29 @@ openmeteo = openmeteo_requests.Client(session=retry_session)
 # Make sure all required weather variables are listed here
 # The order of variables in hourly or daily is important to assign them correctly below
 url = "https://api.open-meteo.com/v1/forecast"
-params = {
-    "latitude": 30.2672,
-    "longitude": -97.7431,
-    "daily": [
-        "weather_code",
-        "sunrise",
-        "sunset",
-        "temperature_2m_max",
-        "temperature_2m_min",
-    ],
-    "timezone": "auto",
-    "forecast_days": 2,
-    "wind_speed_unit": "mph",
-    "temperature_unit": "fahrenheit",
-    "precipitation_unit": "inch",
-}
 
 
-def gen_weather():
+def gen_weather(passed_config):
     lines = []
+
+    coordinates = get_lat_and_lon(passed_config["location"])
+
+    params = {
+        "latitude": coordinates["lat"],
+        "longitude": coordinates["lon"],
+        "daily": [
+            "weather_code",
+            "sunrise",
+            "sunset",
+            "temperature_2m_max",
+            "temperature_2m_min",
+        ],
+        "timezone": "auto",
+        "forecast_days": 2,
+        "wind_speed_unit": "mph",
+        "temperature_unit": "fahrenheit",
+        "precipitation_unit": "inch",
+    }
 
     lines.append("## Weather")
 
@@ -90,10 +94,12 @@ def gen_weather():
         code = weather_codes[i]
         weather = weather_codes_map.get(code, f"Unknown ({code})")
         lines.append(
-            f"{date}: {weather}, {round(temps_min[i])}°F – {round(temps_max[i])}°F | Sunrise: {sunrise}, Sunset: {sunset}"
+            f"{date}: {weather}, {round(temps_min[i])}°F – {round(temps_max[i])}°F | Sunrise: {sunrise}, Sunset: {sunset}\n"
         )
 
     return "\n".join(lines)
 
 
-gen_weather()
+# if __name__ == "__main__":
+# test = gen_weather()
+# print(test)

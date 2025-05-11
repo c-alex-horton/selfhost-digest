@@ -44,7 +44,7 @@ def main():
     all_sections.append(make_header())
 
     if "weather" in config["modules"]:
-        all_sections.append(gen_weather())
+        all_sections.append(gen_weather(config["modules"]["weather"]))
 
     if "lemmy" in config["modules"]:
         all_sections.append(gen_lemmy_news(config["modules"]["lemmy"]))
