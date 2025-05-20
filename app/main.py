@@ -1,5 +1,6 @@
 from pathlib import Path
 import shutil
+import markdown
 from .config import config
 from app.lemmy.lemmy_news import gen_lemmy_news
 from datetime import datetime
@@ -53,7 +54,11 @@ def main():
 
     output_path = output_dir / "selfhost_digest.md"
     output_path.write_text(full_md, encoding="utf-8")
-
+    
+    if config["html"]:
+        tempHTML = markdown.markdown(full_md)
+        html_path = output_dir / "index.html"
+        html_path.write_text(tempHTML, encoding='utf=8')
 
 if __name__ == "__main__":
     main()
