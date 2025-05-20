@@ -23,7 +23,7 @@ def download_image(url):
         return "images/placeholder.jpg"
 
     try:
-        images_dir = Path(config["output_path"]) / "images"
+        images_dir = Path("temp/images")
         images_dir.mkdir(exist_ok=True)
 
         filename = str(uuid.uuid4()) + "-image.jpg"
