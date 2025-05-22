@@ -1,17 +1,18 @@
-from os import wait
-from pathlib import Path
 import shutil
-import time
 import threading
+import time
+from datetime import datetime
+from pathlib import Path
+
 import markdown
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
-from apscheduler.triggers.interval import IntervalTrigger
-from .config import config
+
 from app.lemmy.lemmy_news import gen_lemmy_news
-from datetime import datetime
-from app.weather.weather import gen_weather
 from app.utils.server import serve_content
+from app.weather.weather import gen_weather
+
+from .config import config
 
 all_posts = []
 output_dir = Path(config["output_path"])
@@ -25,6 +26,7 @@ def make_header():
     display_time = now.strftime("%Y-%m-%d %H:%M:%S")
     lines.append(f"#### {display_time}\n")
     return "\n".join(lines)
+
 
 def generate_digest():
     
@@ -52,6 +54,7 @@ def generate_digest():
 
     shutil.copytree(temp_dir, output_dir, dirs_exist_ok=True)
 
+
 def build_markdown():
         all_sections = []
 
@@ -65,6 +68,7 @@ def build_markdown():
 
         return  "\n\n---\n\n".join(all_sections)
 
+
 def gen_html_site(full_md, temp_dir):
     with open(temp_dir / "template.html") as f:
         template = f.read()
@@ -72,6 +76,7 @@ def gen_html_site(full_md, temp_dir):
     final_html = template.replace("contenthere", tempHTML)
     html_path = temp_dir / "index.html"
     html_path.write_text(final_html, encoding='utf=8')
+
 
 def main():
         
@@ -82,9 +87,6 @@ def main():
     for entry in config.get('schedule', []):
         hour, minute = map(int, entry["time"].split(":"))
         trigger = CronTrigger(hour=hour, minute=minute)
-
-        # Testing
-        #trigger = IntervalTrigger(seconds=120) 
 
         scheduler.add_job(generate_digest, trigger)
     
