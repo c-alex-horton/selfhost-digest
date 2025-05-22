@@ -11,8 +11,8 @@ def serve_content():
         def __init__(self, *args, **kwargs):
             super().__init__(*args, directory=str(output_dir), **kwargs)
 
-    with socketserver.TCPServer(("", PORT), Handler) as httpd:
-        print(f"Serving on http://localhost:{PORT}")
+    with socketserver.TCPServer(("0.0.0.0", PORT), Handler) as httpd:
+        print(f"Serving on http://0.0.0.0:{PORT}")
         try:
             httpd.serve_forever()
         except KeyboardInterrupt:

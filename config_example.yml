@@ -5,12 +5,17 @@ output_path: ./export/
 html: true
 port: 9002
 
+schedule:
+  - time: "03:30"
+  - time: "09:00"
+  - time: "16:00"
+
 # If left on default, user agent will appear as 'Selfhost-Digest/1.0 <Your Network Host Name> https://github.com/c-alex-horton/selfhost-digest'
 user_agent_name: default
 
 modules:
   weather:
-    location: Denver, Colorado
+    location: Austin, Tx
   lemmy:
     instances:
       - url: https://lemmy.world
