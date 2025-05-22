@@ -10,3 +10,4 @@ services:
       - ./config.yml:/config.yml:ro
     environment:
       - PYTHONUNBUFFERED=1
+      - TZ=America/Chicago
