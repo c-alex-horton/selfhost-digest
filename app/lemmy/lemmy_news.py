@@ -2,7 +2,7 @@ import requests
 from datetime import datetime
 import json
 from app.utils.image_utils import download_image, handle_opengraph
-from app.config import config
+from app.config import config, ua
 from pathlib import Path
 
 
@@ -13,6 +13,10 @@ def get_posts(instances):
     for instance in instances:
         url = f"{instance["url"]}/api/v3/post/list"
 
+        HEADERS = {
+            "User-Agent": ua
+        }
+
         for community in instance["communities"]:
             params = {
                 "community_name": community["name"],
@@ -20,7 +24,7 @@ def get_posts(instances):
                 "sort": "Hot",
             }
             print(f"Getting posts from {instance['url']}/c/{community['name']}...")
-            resp = requests.get(url, params=params)
+            resp = requests.get(url, headers=HEADERS,params=params)
 
             fetched_posts = resp.json()["posts"]
 

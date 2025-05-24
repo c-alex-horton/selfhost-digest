@@ -1,5 +1,6 @@
 # Selfhost Digest
-A simple python script to fetch posts from Lemmy (and soon more) and output them in a formatted MarkDown file for easy reading. Fight the morning doom-scroll and instead limit your news intake. 
+
+A simple python script to fetch posts from Lemmy (and soon more) and output them in a formatted MarkDown file for easy reading. Fight the morning doom-scroll and instead limit your news intake.
 
 ## Install and Run
 
@@ -15,6 +16,7 @@ Run with make
 By default, you're output will be in `selfhosted-digest/export/`
 
 ## Config.yml
+
 ```
 ---
 # If true, runs in testing mode. Will only download articles once if a posts_output.json does not exist.
@@ -29,6 +31,9 @@ output_path: ./export/
 # If left as "default", the User-Agent will appear as:
 # 'Selfhost-Digest/1.0 <Your Network Host Name> https://github.com/c-alex-horton/selfhost-digest'
 user_agent_name: default
+
+html: true
+
 
 modules:
   weather:
@@ -50,7 +55,7 @@ modules:
 ```
 
 ## Placeholder.jpg
-To change the placeholder image, simply replace `placeholder.jpg` with whatever jpg you like.
 
+To change the placeholder image, simply replace `placeholder.jpg` with whatever jpg you like.
 
 Placeholder image from [Pixabay](https://pixabay.com/illustrations/newspaper-article-journal-headlines-3324168/)

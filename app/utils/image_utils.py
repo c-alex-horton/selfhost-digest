@@ -1,46 +1,54 @@
 import requests
 from pathlib import Path
-from urllib.parse import urlparse
 import uuid
-import os
+import time
 from opengraph_parse import parse_page
-from app.config import config
+from app.config import config, ua
 
 
 def handle_opengraph(link_url):
     if config["testing"]:
         return "images/placeholder.jpg"
 
-    data = parse_page(link_url)
-    if isinstance(data, dict) and "og:image" in data:
-        return download_image(data["og:image"])
-    else:
-        return False
+    try:
+        data = parse_page(link_url)
+        if isinstance(data, dict) and "og:image" in data:
+            return download_image(data["og:image"])
+    except Exception as e:
+        print(f"Failed to parse OpenGraph for {link_url}: {e}")
+
+    return "images/placeholder.jpg" if config["image_for_all_posts"] else None
 
 
-def download_image(url):
+def download_image(url, retries=3, delay=3):
     if config["testing"]:
         return "images/placeholder.jpg"
 
-    try:
-        images_dir = Path("temp/images")
-        images_dir.mkdir(exist_ok=True)
+    images_dir = Path("temp/images")
+    images_dir.mkdir(parents=True, exist_ok=True)
+    filename = f"{uuid.uuid4()}-image.jpg"
+    filepath = images_dir / filename
 
-        filename = str(uuid.uuid4()) + "-image.jpg"
-        filepath = images_dir / filename
+    HEADERS = {
+        "User-Agent": ua
+    }
 
-        response = requests.get(url, stream=True, timeout=10)
-        response.raise_for_status()
+    for attempt in range(retries):
+        try:
+            response = requests.get(url, headers=HEADERS, stream=True, timeout=10)
+            response.raise_for_status()
 
-        with open(filepath, "wb") as f:
-            for chunk in response.iter_content(1024):
-                f.write(chunk)
+            with open(filepath, "wb") as f:
+                for chunk in response.iter_content(1024):
+                    f.write(chunk)
 
-        print(f"Downloaded: {filepath}")
-        return Path("images") / filename
+            print(f"Downloaded: {filepath}")
+            return Path("images") / filename
 
-    except Exception as e:
-        print(f"Failed to download {url}: {e}")
-        if config["image_for_all_posts"]:
-            return "images/placeholder.jpg"
-        return None
+        except requests.exceptions.RequestException as e:
+            print(f"Attempt {attempt + 1} failed to download {url}: {e}")
+            time.sleep(delay)
+
+    print(f"Giving up on {url}")
+    return "images/placeholder.jpg" if config["image_for_all_posts"] else None
+
